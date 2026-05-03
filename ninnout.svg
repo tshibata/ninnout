@@ -1,0 +1,12 @@
+<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" >
+  <polygon points="15,1 15,15 1,15" fill="black" stroke="none" />
+  <polygon points="17,1 17,15 31,15" fill="black" stroke="none" />
+  <polygon points="1,31 15,31 1,17" fill="black" stroke="none" />
+  <polygon points="31,31 31,17 17,31" fill="black" stroke="none" />
+
+  <polygon points="8,1 8,8 1,8" fill="black" stroke="none" />
+  <polygon points="24,1 24,8 31,8" fill="black" stroke="none" />
+  <polygon points="8,17 8,24 15,24" fill="black" stroke="none" />
+  <polygon points="24,17 24,24 17,24" fill="black" stroke="none" />
+
+</svg>
