@@ -1,8 +1,16 @@
+#include <functional>
 #include <queue>
+#include <tuple>
+#include <utility>
 
 #include "ninnout.h"
 
 #include <iostream>
+
+template<> void handle_messages(int msg)
+{
+	std::cout << msg << std::endl;
+}
 
 int main(int argc, char * * argv)
 {
@@ -10,10 +18,6 @@ int main(int argc, char * * argv)
 	send_messages(2, 3);
 	send_messages(4, 5, 6);
 
-	while (! shared_queue<int>.empty())
-	{
-		std::cout << shared_queue<int>.front() << std::endl;
-		shared_queue<int>.pop();
-	}
+	while (receive_messages<int>());
 	return 0;
 }
