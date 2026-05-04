@@ -1,6 +1,9 @@
 /*
- * Merge sort by using a message queue.
+ * Samples:
+ * - Count down
+ * - Merge sort by using a message queue
  */
+#include <setjmp.h>
 #include <functional>
 #include <queue>
 #include <tuple>
@@ -10,6 +13,28 @@
 
 #include <iostream>
 #include <random>
+
+template<> void handle_messages(char c)
+{
+	std::cout << " " << c;
+}
+
+template<> void handle_messages(int i)
+{
+	if (i < 0)
+	{
+		finish_messages();
+	}
+	send_messages(i - 1, (char) ('0' + i));
+}
+
+void count_down()
+{
+	std::cout << "count down:";
+	send_messages(9);
+	while (receive_messages<char>() || receive_messages<int>());
+	std::cout << std::endl;
+}
 
 struct Section
 {
@@ -66,7 +91,7 @@ template<> void handle_messages(Section * s)
 	delete(s);
 }
 
-int main(int argc, char * * argv)
+void merge_sort()
 {
 	std::random_device seed;
 	std::mt19937 engine(seed());
@@ -84,5 +109,11 @@ int main(int argc, char * * argv)
 
 	while (receive_messages<Section *, Section *>()
 		|| receive_messages<Section *>());
+}
+
+int main(int argc, char * * argv)
+{
+	count_down();
+	merge_sort();
 	return 0;
 }

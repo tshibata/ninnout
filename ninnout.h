@@ -1,4 +1,6 @@
 
+extern jmp_buf ninnout_jmp_buf;
+
 template<typename T>
 inline std::queue<T> shared_queue;
 
@@ -68,8 +70,16 @@ bool receive_messages()
 	if (std::apply(check_all_messages<Ts...>, tpl))
 	{
 		set_all_messages(tpl);
-		std::apply(handle_messages<Ts...>, tpl);
+		switch (setjmp(ninnout_jmp_buf)) {
+		case 0:
+			std::apply(handle_messages<Ts...>, tpl);
+			break;
+		default:
+			break;
+		}
 		return true;
 	}
 	return false;
 }
+
+void finish_messages();
