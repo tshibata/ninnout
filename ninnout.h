@@ -14,7 +14,9 @@ void send(T msg)
 	shared_queue_count<T>++;
 }
 
-void send_messages();
+inline void send_messages()
+{
+}
 
 template <class Head, class... Tail>
 void send_messages(Head&& head, Tail&&... tail)
@@ -23,7 +25,10 @@ void send_messages(Head&& head, Tail&&... tail)
 	send_messages(std::forward<Tail>(tail)...);
 }
 
-bool check_messages();
+inline bool check_messages()
+{
+	return true;
+}
 
 template <class Head, class... Tail>
 bool check_messages(Head&& head, Tail&&... tail)
