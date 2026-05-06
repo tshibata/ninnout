@@ -1,5 +1,7 @@
 
-extern jmp_buf ninnout_jmp_buf;
+extern thread_local jmp_buf ninnout_jmp_buf;
+
+extern std::mutex ninnout_mutex;
 
 template<typename T>
 inline std::queue<T> shared_queue;
@@ -14,15 +16,22 @@ void send(T msg)
 	shared_queue_count<T>++;
 }
 
-inline void send_messages()
+inline void send_messages_impl()
 {
 }
 
 template <class Head, class... Tail>
-void send_messages(Head&& head, Tail&&... tail)
+void send_messages_impl(Head&& head, Tail&&... tail)
 {
 	send(head);
-	send_messages(std::forward<Tail>(tail)...);
+    send_messages_impl(std::forward<Tail>(tail)...);
+}
+
+template <class... Tail>
+void send_messages(Tail&&... tail)
+{
+	std::lock_guard<std::mutex> lock(ninnout_mutex);
+	send_messages_impl(std::forward<Tail>(tail)...);
 }
 
 inline bool check_messages()
@@ -68,13 +77,14 @@ void set_all_messages(std::tuple<Ts...>& tpl)
 template<typename... Ts> void handle_messages(Ts...);
 
 template<typename... Ts>
-bool receive_messages()
+bool receive_messages(std::unique_lock<std::mutex>& lock)
 {
 	std::tuple<Ts...> tpl;
 
 	if (std::apply(check_all_messages<Ts...>, tpl))
 	{
 		set_all_messages(tpl);
+		lock.unlock();
 		switch (setjmp(ninnout_jmp_buf)) {
 		case 0:
 			std::apply(handle_messages<Ts...>, tpl);

@@ -5,6 +5,7 @@
  */
 #include <setjmp.h>
 #include <functional>
+#include <mutex>
 #include <queue>
 #include <tuple>
 #include <utility>
@@ -32,7 +33,12 @@ void count_down()
 {
 	std::cout << "count down:";
 	send_messages(9);
-	while (receive_messages<char>() || receive_messages<int>());
+	while (true)
+	{
+		std::unique_lock<std::mutex> lock(ninnout_mutex);
+		if (! (receive_messages<char>(lock)
+			|| receive_messages<int>(lock))) break;
+	}
 	std::cout << std::endl;
 }
 
@@ -107,8 +113,12 @@ void merge_sort()
 	}
 	std::cout << std::endl;
 
-	while (receive_messages<Section *, Section *>()
-		|| receive_messages<Section *>());
+	while (true)
+	{
+		std::unique_lock<std::mutex> lock(ninnout_mutex);
+		if (! (receive_messages<Section *, Section *>(lock)
+			|| receive_messages<Section *>(lock))) break;
+	}
 }
 
 int main(int argc, char * * argv)
